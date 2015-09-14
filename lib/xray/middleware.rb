@@ -44,6 +44,12 @@ module Xray
             append_js!(body, 'backbone', 'xray-backbone')
           end
           content_length = body.bytesize.to_s
+
+          # HACK: For rails v4.2.0+ compatibility
+          if ActionDispatch::Response::RackBody
+            response = response.instance_variable_get(:@response)
+          end
+
           # Modifying the original response obj maintains compatibility with other middlewares
           if ActionDispatch::Response === response
             response.body = [body]
